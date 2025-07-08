@@ -16,10 +16,10 @@ public class NormalStudent extends Student{
     public void setEntryTestScore(double entryTestScore) {
         this.entryTestScore = entryTestScore;
     }
-    public NormalStudent() {
-        super();
-        this.englishScore = 0.0;
-        this.entryTestScore = 0.0;
+    public NormalStudent(String fullName, String dob, String sex, String phoneNumber, String universityName, String gradeLevel, double englishScore, double entryTestScore) {
+        super(fullName, dob, sex, phoneNumber, universityName, gradeLevel);
+        this.englishScore = englishScore;
+        this.entryTestScore = entryTestScore;
     }
     @Override
     public void ShowMyInfor() {

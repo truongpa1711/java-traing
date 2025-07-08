@@ -45,6 +45,15 @@ public abstract class Student {
         this.gradeLevel = gradeLevel;
     }
 
+    public Student(String fullName, String doB, String sex, String phoneNumber, String universityName, String gradeLevel) {
+        this.fullName = fullName;
+        this.doB = doB;
+        this.sex = sex;
+        this.phoneNumber = phoneNumber;
+        this.universityName = universityName;
+        this.gradeLevel = gradeLevel;
+    }
+
     public void ShowMyInfor(){
         System.out.println("Full Name: " + fullName);
         System.out.println("Date of Birth: " + doB);

@@ -16,10 +16,11 @@ public class GoodStudent extends Student{
     public void setBestRewardName(String bestRewardName) {
         this.bestRewardName = bestRewardName;
     }
-    public GoodStudent(){
-        super();
-        this.gpa = 0.0;
-        this.bestRewardName = "";
+
+    public GoodStudent(String fullName, String dob, String sex, String phoneNumber, String universityName, String gradeLevel, double gpa, String bestRewardName) {
+        super(fullName, dob, sex, phoneNumber, universityName, gradeLevel);
+        this.gpa = gpa;
+        this.bestRewardName = bestRewardName;
     }
 
     @Override
