@@ -2,33 +2,43 @@
 .idea/
 *.iml
 
-# Ignore build output directory
+# Ignore Eclipse project files
+.classpath
+.project
+.settings/
+
+# Ignore build output directories
 /out/
 /target/
 /build/
+/bin/
 
-# Ignore logs and temporary files
+# Ignore logs and temp files
 *.log
 *.tmp
 *.swp
 
-# Ignore OS files
+# Ignore OS-specific files
 .DS_Store
 Thumbs.db
 
 # Ignore compiled class files
 *.class
 
-# Maven
+# Maven wrapper and build
 .mvn/
-!**/src/main/**/mvnw*
-!**/src/test/**/mvnw*
+target/
+!mvnw
+!mvnw.cmd
 
-# Gradle
+# Gradle wrapper and build
 .gradle/
 build/
 !gradlew
 !gradlew.bat
 
-# VS Code (in case someone opens with VS Code)
+# Ignore VS Code settings
 .vscode/
+
+
+target/
