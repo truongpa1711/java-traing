@@ -1,6 +1,5 @@
 package com.example.demo.middleware;
 
-import com.example.demo.entity.Role;
 import com.example.demo.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

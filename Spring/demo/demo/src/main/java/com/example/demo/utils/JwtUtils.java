@@ -1,11 +1,9 @@
 package com.example.demo.utils;
 
-import com.example.demo.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
