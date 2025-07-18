@@ -1,1 +1,5 @@
-# -java-traing
+- tìm hiểu authenticationManager trong Spring Security
+- code về authenticationManager trong Spring Security cho endpoint login
+- tạo jwt token, refesh token
+- tầng filter trong Spring Security
+- tìm hểu lý thuyết về Service, Scheduler/Cronjob, Transactional
