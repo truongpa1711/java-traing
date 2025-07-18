@@ -7,6 +7,7 @@ import com.example.demo.repository.StudentRepository;
 import com.example.demo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
+    @PreAuthorize("hasRole('GUEST')")
     @GetMapping("/all")
     public ResponseEntity<List<StudentDto>> getAllStudents() {
         return ResponseEntity.ok(
