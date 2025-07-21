@@ -3,10 +3,15 @@ package com.example.demo.service;
 import com.example.demo.dto.BaseResponseDTO;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RefeshTokenRequest;
+import com.example.demo.dto.request.RegisterRequest;
 import com.example.demo.dto.response.LoginResponse;
+import com.example.demo.entity.ERole;
+import com.example.demo.entity.Role;
 import com.example.demo.entity.Student;
+import com.example.demo.event.StudentRegistrationEvent;
 import com.example.demo.repository.StudentRepository;
 import com.example.demo.utils.JwtUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,15 +28,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public AuthService(StudentRepository studentRepository,
                        PasswordEncoder passwordEncoder,
                        JwtUtils jwtUtils,
-                       AuthenticationManager authenticationManager) {
+                       AuthenticationManager authenticationManager, ApplicationEventPublisher applicationEventPublisher) {
         this.studentRepository = studentRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
         this.authenticationManager = authenticationManager;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public BaseResponseDTO<?> login(LoginRequest loginRequest) {
@@ -110,6 +117,62 @@ public class AuthService {
         }
     }
 
+    public BaseResponseDTO<?> register(RegisterRequest registerRequest) {
+        try{
+            if(studentRepository.existsByUsername(registerRequest.getUsername())) {
+                return errorResponse("Username already exists");
+            }
+            if(studentRepository.existsByEmail(registerRequest.getEmail())) {
+                return errorResponse("Email already exists");
+            }
+            Role defaultRole = new Role();
+            defaultRole.setId(1L);
+            defaultRole.setName(ERole.STUDENT);
+
+            String verificationToken = jwtUtils.generateVerificationToken(registerRequest.getEmail());
+
+            Student student = Student.builder()
+                    .name(registerRequest.getName())
+                    .email(registerRequest.getEmail())
+                    .username(registerRequest.getUsername())
+                    .password(passwordEncoder.encode(registerRequest.getPassword()))
+                    .roles(Set.of(defaultRole)) // Default role
+                    .is_verified(false)
+                    .verification_token(verificationToken)// Assuming new users are enabled by default
+                    .build();
+            studentRepository.save(student);
+            applicationEventPublisher.publishEvent(new StudentRegistrationEvent(this, student));
+            return successResponse("Registration successful", student);
+        }catch (Exception e) {
+            return errorResponse(e.getMessage());
+        }
+    }
+
+    public BaseResponseDTO<?> verifyEmail(String token) {
+        try {
+            if (!jwtUtils.validateVerificationToken(token)) {
+                return errorResponse("Invalid or expired verification token");
+            }
+            String email = jwtUtils.extractEmailFromVerificationToken(token);
+            Student student = studentRepository.findByEmail(email)
+                    .orElseThrow(() -> new Exception("User not found"));
+
+            if (student.is_verified()) {
+                return errorResponse("Email already verified");
+            }
+
+            student.set_verified(true);
+            student.setVerification_token(null); // Clear the verification token
+            studentRepository.save(student);
+
+            return successResponse("Email verified successfully", student);
+        } catch (Exception e) {
+            return errorResponse(e.getMessage());
+        }
+    }
+
+    //======================
+
     private Set<String> extractRoleNames(Student student) {
         return student.getRoles().stream()
                 .map(role -> role.getName().name())
@@ -140,4 +203,5 @@ public class AuthService {
                 .data(null)
                 .build();
     }
+
 }
