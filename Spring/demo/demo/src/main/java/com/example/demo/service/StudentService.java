@@ -8,6 +8,10 @@ import com.example.demo.entity.StudentCourse;
 import com.example.demo.repository.CourseRepository;
 import com.example.demo.repository.StudentCourseRepository;
 import com.example.demo.repository.StudentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -45,9 +49,26 @@ public class StudentService {
 //    }
 
 
-    public List<?> getAllStudents() {
-        return studentRepository.findAll();
+//    public List<?> getAllStudents() {
+//        return studentRepository.findAll();
+//    }
+    public Page<Student> getAllStudents(int page, int size, String keyword, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ?
+            Sort.by(sortBy).ascending() :
+            Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page-1, size, sort);
+        return studentRepository.searchStudents(keyword, pageable);
     }
+
+    public Page<StudentDto> getAllStudents_v1(int page, int size, String keyword, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("asc") ?
+            Sort.by(sortBy).ascending() :
+            Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page-1, size, sort);
+        return studentRepository.searchStudents_v1(keyword, pageable);
+    }
+
+
 
     public Student getStudentById(Long id) {
         return studentRepository.findById(id).orElse(null);
