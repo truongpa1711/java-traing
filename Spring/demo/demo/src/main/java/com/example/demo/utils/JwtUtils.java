@@ -87,4 +87,30 @@ public class JwtUtils {
         }
     }
 
+    public String generateVerificationToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("tokenType", "verification")
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 5*60*1000 )) // 5 minutes expiration
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+    public boolean validateVerificationToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return "verification".equals(claims.get("tokenType")) &&
+                   !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public String extractEmailFromVerificationToken(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
 }
